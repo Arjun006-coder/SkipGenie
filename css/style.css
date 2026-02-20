@@ -2397,6 +2397,11 @@ code {
 
   .sidebar {
     transform: translateX(calc(var(--sidebar-w) * -1));
+    background: rgba(15, 18, 32, 0.94);
+    /* Stronger background */
+    backdrop-filter: blur(18px);
+    /* Better glass effect */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .sidebar.open {
@@ -2412,7 +2417,8 @@ code {
   }
 
   .page-header {
-    padding: 20px 16px 16px;
+    padding: 60px 16px 16px;
+    /* Increased padding-top to avoid hamburger overlap */
   }
 
   .content-wrap {
