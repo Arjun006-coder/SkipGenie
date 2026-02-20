@@ -20,14 +20,22 @@ export function isLoggedIn() {
 }
 
 export function doLogout() {
-  ['authToken','authTokenTimestamp','studentId','cachedProfile','cachedCourses','cachedDashboard']
+  ['authToken', 'authTokenTimestamp', 'studentId', 'cachedProfile', 'cachedCourses', 'cachedDashboard']
     .forEach(k => localStorage.removeItem(k));
 }
 
 // ── Core fetch with auth ──────────────────────────────────────
 async function apiFetch(path, options = {}) {
   const token = getToken();
-  const res = await fetch(API_BASE + path, {
+  let url = API_BASE + path;
+
+  // Use a CORS proxy for public deployments (like GitHub Pages)
+  // as kiet.cybervidya.net doesn't have CORS headers for random domains.
+  if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+    url = 'https://corsproxy.io/?' + encodeURIComponent(url);
+  }
+
+  const res = await fetch(url, {
     ...options,
     headers: {
       'Authorization': token || '',
@@ -61,7 +69,7 @@ export { AuthError };
 
 // ── Helper ───────────────────────────────────────────────────
 function fmtDate(d) {
-  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), dd = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${dd}`;
 }
 
@@ -85,7 +93,7 @@ export async function getStudentProfileInfo() {
 
 export async function getWeeklySchedule(startDate, endDate) {
   const start = startDate || fmtDate(new Date());
-  const end   = endDate   || fmtDate(new Date(Date.now() + 6*86400000));
+  const end = endDate || fmtDate(new Date(Date.now() + 6 * 86400000));
   return apiFetch(`/student/schedule/class?weekStartDate=${start}&weekEndDate=${end}`);
 }
 
@@ -114,7 +122,11 @@ export async function getProfilePhoto(photoUrl) {
   // Fetches the photo as base64
   const token = getToken();
   try {
-    const res = await fetch(photoUrl, { headers: { Authorization: token } });
+    let url = photoUrl;
+    if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+      url = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    }
+    const res = await fetch(url, { headers: { Authorization: token } });
     if (!res.ok) return null;
     const blob = await res.blob();
     return new Promise(resolve => {
