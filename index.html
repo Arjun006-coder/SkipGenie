@@ -255,9 +255,9 @@
         function showIntro() { showStep('stepIntro'); }
 
         function copyMagicLink() {
-            const script = `location.href='${window.location.origin}${window.location.pathname}?token='+localStorage.getItem('authenticationtoken')`;
+            const script = `javascript:location.href='${window.location.origin}${window.location.pathname}?token='+localStorage.getItem('authenticationtoken')`;
             navigator.clipboard.writeText(script);
-            alert("Magic Snippet Copied!\n\nNow Go to your CyberVidya tab, open Console (F12), paste and press Enter.\n\nYou will be auto-redirected back here!");
+            alert("Magic Snippet Copied!\n\nMOBILE USERS: Save this as a Bookmark URL. Then tap it while on the CyberVidya tab to log in instantly!");
         }
 
         function copyCmd() {
