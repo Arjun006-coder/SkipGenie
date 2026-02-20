@@ -2354,7 +2354,8 @@ code {
   position: fixed;
   top: 16px;
   left: 14px;
-  z-index: 200;
+  z-index: 500;
+  /* Higher than everything else */
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-sm);
@@ -2362,6 +2363,7 @@ code {
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
 }
 
 .hamburger span {
@@ -2397,11 +2399,13 @@ code {
 
   .sidebar {
     transform: translateX(calc(var(--sidebar-w) * -1));
-    background: rgba(15, 18, 32, 0.94);
-    /* Stronger background */
-    backdrop-filter: blur(18px);
-    /* Better glass effect */
+    background: #111525;
+    /* Solid dark background for clarity */
+    backdrop-filter: none;
+    /* Remove blur from sidebar itself to avoid content blurring */
     border-right: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    /* Ensure it's above the overlay */
   }
 
   .sidebar.open {
@@ -2410,6 +2414,8 @@ code {
 
   .main-content {
     margin-left: 0;
+    padding-top: 60px;
+    /* Global safety margin for header */
   }
 
   .hamburger {
@@ -2417,8 +2423,8 @@ code {
   }
 
   .page-header {
-    padding: 60px 16px 16px;
-    /* Increased padding-top to avoid hamburger overlap */
+    padding: 16px;
+    /* Reset padding since main-content handles top spacing */
   }
 
   .content-wrap {
