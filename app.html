@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkipGenie — Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="dark">
+
+    <div class="mesh-bg">
+        <div class="mesh-blob blob-1"></div>
+        <div class="mesh-blob blob-2"></div>
+        <div class="mesh-blob blob-3"></div>
+    </div>
+
+    <!-- Mobile hamburger + overlay -->
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+    <div class="app-layout" style="position:relative;z-index:1;">
+
+        <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🎓</div>
+                <div class="logo-text">
+                    <div class="brand-name">SkipGenie</div>
+                    <div class="brand-ver">KIET Attendance Dashboard</div>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Main</div>
+                <div class="nav-item active" data-page="home" onclick="navigate('home')">
+                    <span class="nav-icon">🏠</span> Home
+                </div>
+                <div class="nav-item" data-page="timetable" onclick="navigate('timetable')">
+                    <span class="nav-icon">📅</span> Timetable
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Academics</div>
+                <div class="nav-item" data-page="exams" onclick="navigate('exams')">
+                    <span class="nav-icon">📝</span> Exams
+                </div>
+                <div class="nav-item" data-page="profile" onclick="navigate('profile')">
+                    <span class="nav-icon">👤</span> Profile
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Tools</div>
+                <div class="nav-item" data-page="projection" onclick="navigate('projection')">
+                    <span class="nav-icon">🔮</span> Attendance Projector
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-chip" id="userChip">
+                    <div class="avatar-sm" id="sidebarAvatar">?</div>
+                    <div class="user-chip-info">
+                        <div class="user-chip-name" id="sidebarName">Loading...</div>
+                        <div class="user-chip-roll" id="sidebarRoll">—</div>
+                    </div>
+                </div>
+                <div class="sidebar-actions">
+                    <button class="sidebar-btn theme-btn" onclick="toggleTheme()" title="Toggle theme">
+                        <span id="themeIcon">🌙</span> Theme
+                    </button>
+                    <button class="sidebar-btn logout-btn" onclick="confirmLogout()">
+                        🚪 Logout
+                    </button>
+                </div>
+                <div
+                    style="text-align:center;font-size:10px;color:var(--c-text-3);padding:6px 0 2px;letter-spacing:0.04em;">
+                    Made with ❤️ by <strong style="color:var(--c-primary-l);">Arjun</strong> — CSE
+                </div>
+            </div>
+        </nav>
+
+        <!-- ══ MAIN CONTENT ════════════════════════════════════ -->
+        <main class="main-content">
+
+            <!-- ── HOME ─────────────────────────────────────────── -->
+            <div class="page active" id="page-home">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title" id="homeGreeting">Good Evening, 👋</div>
+                        <div class="page-subtitle">Here's your attendance snapshot</div>
+                    </div>
+                    <div class="page-actions">
+                        <button class="refresh-btn" id="refreshBtn" onclick="refreshHome()">
+                            <svg id="refreshIcon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10" />
+                                <path d="M3.51 15a9 9 0 1 0 .49-3" />
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="content-wrap">
+
+                    <!-- Student info chips -->
+                    <div class="info-strip" id="infoStrip">
+                        <div class="info-chip skeleton-chip"
+                            style="width:140px;height:38px;border-radius:50px;background:rgba(255,255,255,0.06);"></div>
+                        <div class="info-chip skeleton-chip"
+                            style="width:120px;height:38px;border-radius:50px;background:rgba(255,255,255,0.06);"></div>
+                        <div class="info-chip skeleton-chip"
+                            style="width:150px;height:38px;border-radius:50px;background:rgba(255,255,255,0.06);"></div>
+                    </div>
+
+                    <!-- Overall attendance card -->
+                    <div class="overall-card" id="overallCard">
+                        <div class="loading-wave"><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+
+                    <!-- Stats row -->
+                    <div class="stats-row" id="statsRow" style="display:none;">
+                        <div class="stat-card" style="--stat-color:linear-gradient(90deg,#10b981,#06b6d4)">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-label">Can Bunk</div>
+                            <div class="stat-value" id="statCanBunk" style="color:#10b981;">—</div>
+                            <div class="stat-sub">more classes overall</div>
+                        </div>
+                        <div class="stat-card" style="--stat-color:linear-gradient(90deg,#ef4444,#ec4899)">
+                            <div class="stat-icon">⚠️</div>
+                            <div class="stat-label">Must Attend</div>
+                            <div class="stat-value" id="statMustAttend" style="color:#ef4444;">—</div>
+                            <div class="stat-sub">to reach 75% overall</div>
+                        </div>
+                        <div class="stat-card" style="--stat-color:linear-gradient(90deg,#6366f1,#7c3aed)">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-label">Subjects</div>
+                            <div class="stat-value" id="statSubjects" style="color:#a78bfa;">—</div>
+                            <div class="stat-sub">registered courses</div>
+                        </div>
+                        <div class="stat-card" style="--stat-color:linear-gradient(90deg,#f59e0b,#f97316)">
+                            <div class="stat-icon">🚨</div>
+                            <div class="stat-label">Below 75%</div>
+                            <div class="stat-value" id="statDanger" style="color:#f59e0b;">—</div>
+                            <div class="stat-sub">subjects need attention</div>
+                        </div>
+                    </div>
+
+                    <!-- Subject heading -->
+                    <h2 style="font-size:18px;font-weight:800;margin-bottom:16px;color:var(--c-text);"
+                        id="subjectHeading"></h2>
+
+                    <!-- Course cards grid -->
+                    <div class="courses-grid" id="coursesGrid">
+                        <div class="loading-wave"><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TIMETABLE ──────────────────────────────────────── -->
+            <div class="page" id="page-timetable">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">📅 Timetable</div>
+                        <div class="page-subtitle" id="ttWeekRange">Loading schedule...</div>
+                    </div>
+                    <div class="page-actions week-nav" id="weekNav">
+                        <button class="week-nav-btn" onclick="changeWeek(-1)">← Prev</button>
+                        <button class="week-nav-btn" onclick="changeWeek(0)">Today</button>
+                        <button class="week-nav-btn" onclick="changeWeek(1)">Next →</button>
+                    </div>
+                </div>
+                <div class="content-wrap">
+                    <div id="ttContent">
+                        <div class="loading-wave"><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── EXAMS ──────────────────────────────────────────── -->
+            <div class="page" id="page-exams">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">📝 Exams</div>
+                        <div class="page-subtitle">Schedule, scores & grades</div>
+                    </div>
+                </div>
+                <div class="content-wrap">
+                    <div class="exam-tabs-bar">
+                        <div class="exam-tab active" onclick="switchExamTab('schedule',this)">📋 Date Sheet</div>
+                        <div class="exam-tab" onclick="switchExamTab('scores',this)">🏆 Scores & CGPA</div>
+                    </div>
+                    <div id="examSchedulePanel">
+                        <div class="loading-wave"><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div id="examScoresPanel" style="display:none;">
+                        <div class="loading-wave"><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PROJECTION ─────────────────────────────────────── -->
+            <div class="page" id="page-projection">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">🔮 Attendance Projector</div>
+                        <div class="page-subtitle">Simulate future attendance • exclude leaves • plan smarter</div>
+                    </div>
+                </div>
+                <div class="content-wrap">
+                    <div class="proj-layout">
+
+                        <!-- Left: Controls -->
+                        <div class="proj-form card">
+                            <h3 style="font-size:16px;font-weight:800;margin-bottom:18px;color:var(--c-text);">⚙️
+                                Projection Settings</h3>
+
+                            <div class="form-group">
+                                <label class="form-label">📅 Project until date</label>
+                                <input type="date" class="form-date" id="projDate" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">📊 Assume all classes between today–date are attended?</label>
+                                <select class="form-select" id="projAssume">
+                                    <option value="all">Yes — attend everything</option>
+                                    <option value="none">No — just use current count</option>
+                                </select>
+                            </div>
+
+                            <div style="border-top:1px solid var(--c-border);padding-top:18px;margin-top:4px;">
+                                <label class="form-label">🚫 Exclude specific classes / days</label>
+                                <p style="font-size:12px;color:var(--c-text-3);margin-bottom:10px;">Add leaves you plan
+                                    to take. Specify a full day or a specific subject.</p>
+
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label class="form-label">Date to exclude</label>
+                                    <input type="date" class="form-date" id="exclDate" />
+                                </div>
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label class="form-label">Subject (optional — blank = full day leave)</label>
+                                    <select class="form-select" id="exclSubject">
+                                        <option value="">— Full Day Leave —</option>
+                                    </select>
+                                </div>
+                                <button class="btn-add-excl" onclick="addExclusion()">+ Add Exclusion</button>
+
+                                <div class="exclusion-list" id="exclusionList"></div>
+                            </div>
+
+                            <div style="margin-top:20px;">
+                                <button class="btn-calc" onclick="runProjection()">🔮 Calculate Projection</button>
+                            </div>
+                        </div>
+
+                        <!-- Right: Results -->
+                        <div class="proj-results">
+                            <div class="proj-placeholder" id="projPlaceholder">
+                                <div class="ph-icon">🔮</div>
+                                <h3 style="font-size:17px;font-weight:700;color:var(--c-text);margin-bottom:6px;">See
+                                    the future</h3>
+                                <p>Set a date and hit Calculate to see your projected attendance for each subject.</p>
+                            </div>
+                            <div id="projResultsWrap" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PROFILE ────────────────────────────────────────── -->
+            <div class="page" id="page-profile">
+                <div class="page-header">
+                    <div>
+                        <div class="page-title">👤 Profile</div>
+                        <div class="page-subtitle">Your student information</div>
+                    </div>
+                </div>
+                <div class="content-wrap">
+                    <div id="profileContent">
+                        <div class="loading-wave"><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Lecture Detail Modal -->
+    <div class="modal-overlay" id="lectureModal" onclick="closeLectureModal(event)">
+        <div class="modal-box">
+            <div class="modal-head">
+                <div class="modal-title" id="lectureModalTitle">Lecture Details</div>
+                <div class="modal-close" onclick="closeLectureModal()">✕</div>
+            </div>
+            <div id="lectureModalBody">
+                <div class="loading-wave"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

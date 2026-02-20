@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkipGenie – Attendance Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="login-page dark">
+
+    <!-- Particle Canvas -->
+    <canvas id="particles" class="particles-canvas"></canvas>
+
+    <!-- Animated mesh gradient bg -->
+    <div class="mesh-bg">
+        <div class="mesh-blob blob-1"></div>
+        <div class="mesh-blob blob-2"></div>
+        <div class="mesh-blob blob-3"></div>
+        <div class="mesh-blob blob-4"></div>
+    </div>
+
+    <div class="login-wrapper">
+        <!-- Left panel: Branding -->
+        <div class="login-left">
+            <div class="login-brand-hero">
+                <div class="logo-ring">
+                    <div class="logo-inner">
+                        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                            <path d="M22 6C13.163 6 6 13.163 6 22s7.163 16 16 16 16-7.163 16-16S30.837 6 22 6z"
+                                stroke="white" stroke-width="2" fill="none" opacity="0.5" />
+                            <path d="M15 22l5 5 10-10" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+                <h1 class="hero-title">SkipGenie</h1>
+                <p class="hero-subtitle">KIET Attendance Intelligence</p>
+
+                <div class="feature-pills">
+                    <div class="feature-pill">📊 Subject-wise Tracking</div>
+                    <div class="feature-pill">🎯 75% Smart Alerts</div>
+                    <div class="feature-pill">🔮 Attendance Projection</div>
+                    <div class="feature-pill">📅 Leave Simulator</div>
+                </div>
+                <div style="margin-top:28px;font-size:11px;color:var(--c-text-3);letter-spacing:0.04em;">Made with ❤️ by
+                    <strong style="color:var(--c-primary-l);">Arjun</strong> — CSE
+                </div>
+            </div>
+        </div>
+
+        <!-- Right panel: Login -->
+        <div class="login-right">
+            <div class="login-card" id="loginCard">
+
+                <!-- STEP 1: Intro -->
+                <div class="login-step active" id="stepIntro">
+                    <div class="step-icon">🎓</div>
+                    <h2>Sign in with CyberVidya</h2>
+                    <p class="step-desc">
+                        1. Login to <strong>kiet.cybervidya.net</strong><br />
+                        2. Click the <strong>Magic Login</strong> button below<br />
+                        3. Run it on the CyberVidya tab to auto-capture!
+                    </p>
+
+                    <button class="btn-glow" onclick="copyMagicLink()"
+                        style="background:var(--grad-success);box-shadow:0 4px 20px rgba(16,185,129,0.3);">
+                        <span class="btn-icon">✨</span>
+                        <span>Copy Magic Login Snippet</span>
+                    </button>
+
+                    <div class="divider"><span>or do it manually</span></div>
+
+                    <button class="btn-outline" id="openLoginBtn" onclick="openLogin()">
+                        <span class="btn-icon">🔑</span>
+                        <span>Open CyberVidya Tab</span>
+                    </button>
+
+                    <p class="manual-link">Stuck? <span onclick="showManual()">Manual token paste</span></p>
+                </div>
+
+                <!-- STEP 2: Waiting / Capturing -->
+                <div class="login-step" id="stepWaiting">
+                    <div class="step-icon spin-icon">⚙️</div>
+                    <h2>Connecting to CyberVidya...</h2>
+                    <div class="progress-ring-wrap">
+                        <div class="progress-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <p class="step-desc">Log in on the popup window.<br />We'll detect your session automatically.</p>
+                    <div id="waitStatus" class="wait-status">Waiting for login...</div>
+                    <button class="btn-outline small" onclick="showManual()">Enter token manually instead</button>
+                </div>
+
+                <!-- STEP 3: Manual Token -->
+                <div class="login-step" id="stepManual">
+                    <div class="step-icon">🔐</div>
+                    <h2>Get Your Session Token</h2>
+
+                    <div
+                        style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:12px;padding:16px;font-size:13px;line-height:1.8;">
+                        <strong style="color:var(--c-primary-l);">Step 1.</strong> On the CyberVidya tab, open DevTools
+                        (<kbd
+                            style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">F12</kbd>)<br />
+                        <strong style="color:var(--c-primary-l);">Step 2.</strong> Click the <strong>Console</strong>
+                        tab<br />
+                        <strong style="color:var(--c-primary-l);">Step 3.</strong> Paste this command and press Enter:
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+                            <code id="consoleCmd"
+                                style="flex:1;background:rgba(0,0,0,0.4);padding:8px 10px;border-radius:6px;font-size:11px;color:#a78bfa;display:block;">localStorage.getItem('authenticationtoken')</code>
+                            <button onclick="copyCmd()"
+                                style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.3);border-radius:6px;padding:6px 10px;color:#a78bfa;font-size:11px;font-weight:700;cursor:pointer;"
+                                title="Copy">📋</button>
+                        </div>
+                        <strong style="color:var(--c-primary-l);">Step 4.</strong> Copy the long text that appears
+                        (without the outer quotes)<br />
+                        <strong style="color:var(--c-primary-l);">Step 5.</strong> Paste it below ↓
+                    </div>
+
+                    <div style="font-size:12px;color:var(--c-text-3);text-align:center;">
+                        If the command returns <code>null</code>, try: <code>Object.entries(localStorage)</code> to find
+                        the right key, or check <strong>Application → Cookies</strong>
+                    </div>
+
+                    <div class="token-field-wrap">
+                        <textarea id="tokenInput" class="token-field"
+                            placeholder="Paste the token value here (starts with eyJ... or GlobalEducation ...)"
+                            rows="4"></textarea>
+                    </div>
+                    <button class="btn-glow" onclick="loginWithToken()">
+                        <span class="btn-icon">🚀</span>
+                        <span>Login</span>
+                    </button>
+                    <p class="manual-link"><span onclick="showIntro()">← Back</span></p>
+                    <div id="tokenError" class="error-toast" style="display:none;"></div>
+
+                    <!-- Phone / Bookmarklet section -->
+                    <div style="margin-top:18px;border-top:1px solid var(--c-border);padding-top:16px;">
+                        <div
+                            style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--c-text-3);margin-bottom:10px;">
+                            📱 Using on your phone?</div>
+                        <div
+                            style="font-size:12px;color:var(--c-text-2);line-height:1.8;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:13px;">
+                            <strong style="color:#f59e0b;">One-time setup on PC:</strong><br />
+                            1. On the CyberVidya tab (logged in), run in Console:<br />
+                            <code
+                                style="display:block;margin:6px 0;font-size:10px;">location.href='YOURSITE?token='+localStorage.getItem('authenticationtoken')</code>
+                            Replace <code>YOURSITE</code> with your deployed URL (e.g. GitHub Pages).<br /><br />
+                            <strong style="color:#f59e0b;">On phone:</strong> Save a bookmark with that same JS as the
+                            URL — tap it after logging into CyberVidya mobile and it auto-logs you into KietKT!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <!-- Polling iframe (hidden) -->
+    <iframe id="cvFrame" style="display:none;" tabindex="-1"></iframe>
+
+    <script>
+        // ─── Token Polling from popup ───────────────────────────────
+        let loginPopup = null;
+        let pollInterval = null;
+
+        function openLogin() {
+            loginPopup = window.open(
+                'https://kiet.cybervidya.net/',
+                'cv_login',
+                'width=480,height=660,menubar=no,toolbar=no,status=no,scrollbars=yes'
+            );
+            document.getElementById('doneBtn').style.display = 'flex';
+            document.getElementById('openLoginBtn').querySelector('span:nth-child(2)').textContent = '🔄 Reopen CyberVidya';
+            startPolling();
+        }
+
+        function startPolling() {
+            showStep('stepIntro');
+            if (pollInterval) clearInterval(pollInterval);
+
+            pollInterval = setInterval(() => {
+                try {
+                    if (loginPopup && !loginPopup.closed) {
+                        const token = loginPopup.localStorage.getItem('authenticationtoken');
+                        if (token && token.length > 10) {
+                            clearInterval(pollInterval);
+                            loginPopup.close();
+                            processToken(token);
+                        }
+                    } else if (loginPopup && loginPopup.closed) {
+                        clearInterval(pollInterval);
+                        // popup closed manually — show done btn
+                    }
+                } catch (e) {
+                    // Cross-origin block — expected on the ERP domain. Wait for user to click done.
+                }
+            }, 800);
+        }
+
+        function checkToken() {
+            // Try to grab from popup if still open
+            try {
+                if (loginPopup && !loginPopup.closed) {
+                    const token = loginPopup.localStorage.getItem('authenticationtoken');
+                    if (token && token.length > 10) {
+                        processToken(token);
+                        loginPopup.close();
+                        return;
+                    }
+                }
+            } catch (e) { }
+            // Fallback: show manual
+            showManual();
+        }
+
+        function processToken(raw) {
+            let token = raw;
+            try { if (token.startsWith('"')) token = JSON.parse(token); } catch (e) { }
+            if (!token.includes('GlobalEducation')) token = 'GlobalEducation ' + token;
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('authTokenTimestamp', Date.now().toString());
+            showSuccess();
+        }
+
+        function loginWithToken() {
+            const raw = document.getElementById('tokenInput').value.trim();
+            if (!raw) { showError('Please paste your token.'); return; }
+            processToken(raw);
+        }
+
+        function showSuccess() {
+            document.querySelector('#stepIntro').classList.remove('active');
+            document.getElementById('loginCard').innerHTML = `
+        <div class="login-step active success-step">
+          <div class="success-circle">✓</div>
+          <h2>Logged In!</h2>
+          <p class="step-desc">Redirecting to your dashboard...</p>
+          <div class="loading-bar"><div class="loading-fill"></div></div>
+        </div>`;
+            setTimeout(() => window.location.href = 'app.html', 1800);
+        }
+
+        function showStep(id) {
+            document.querySelectorAll('.login-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        function showManual() { showStep('stepManual'); }
+        function showIntro() { showStep('stepIntro'); }
+
+        function copyMagicLink() {
+            const script = `location.href='${window.location.origin}${window.location.pathname}?token='+localStorage.getItem('authenticationtoken')`;
+            navigator.clipboard.writeText(script);
+            alert("Magic Snippet Copied!\n\nNow Go to your CyberVidya tab, open Console (F12), paste and press Enter.\n\nYou will be auto-redirected back here!");
+        }
+
+        function copyCmd() {
+            navigator.clipboard.writeText("localStorage.getItem('authenticationtoken')");
+            alert("Command copied! Paste it in the CyberVidya Console tab.");
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('tokenError');
+            el.textContent = msg; el.style.display = 'block';
+        }
+
+        // ─── Session Check + URL token param (for bookmarklet) ──────
+        (function () {
+            // Check for ?token= in URL (from mobile bookmarklet)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token');
+            if (urlToken && urlToken.length > 10) {
+                processToken(urlToken);
+                return;
+            }
+            const token = localStorage.getItem('authToken');
+            const ts = localStorage.getItem('authTokenTimestamp');
+            if (token && ts) {
+                const days = (Date.now() - parseInt(ts)) / (1000 * 60 * 60 * 24);
+                if (days <= 30) { window.location.href = 'app.html'; }
+            }
+        })();
+
+        // ─── Particles ───────────────────────────────────────────────
+        (function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            let W, H, particles = [];
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize(); window.addEventListener('resize', resize);
+            for (let i = 0; i < 60; i++) {
+                particles.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2 + 0.5, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, a: Math.random() * 0.6 + 0.1 });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+                particles.forEach(p => {
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(139,92,246,${p.a})`; ctx.fill();
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+                    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+    </script>
+</body>
+
+</html>
